@@ -38,7 +38,7 @@ class RandomForestMnistClassifier(MnistClassifierInterface):
             raise ValueError("❌ Model is not trained! Call train() before predict().")
         return self.model.predict(X_test)
 
-    def save_model(self, path="artifacts/models/random_forest.pkl"):
+    def save_model(self, path="Image_classification/artifacts/models/rf.pkl"):
         """
         Save the trained model to a file.
         :param path: Path to save the model
@@ -53,14 +53,14 @@ class RandomForestMnistClassifier(MnistClassifierInterface):
         except Exception as e:
             print(f"❌ Error saving model: {e}")
 
-    def load_model(self, path="artifacts/models/random_forest.pkl"):
+    def load_model(self, path="artifacts/models/rf.pkl"):
         """
         Load a trained model from a file.
         :param path: Path to load the model from
         """
         if not os.path.exists(path):
             raise FileNotFoundError(f"❌ Model file not found at {path}")
-        with open(path, "rb") as f:
-            self.model = pickle.load(f)
+        
+        self.model = joblib.load(path)
         self.is_trained = True  # Mark model as trained
         print(f"Model loaded from {path}")

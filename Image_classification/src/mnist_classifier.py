@@ -1,21 +1,24 @@
 from src.models.random_forest import RandomForestMnistClassifier
+from src.models.feed_forward_nn import FeedForwardNNClassifier
+from src.models.feed_forward_nn import FeedForwardNN
+from src.models.cnn import CNNClassifier
 
 class MnistClassifier:
     """
     Wrapper class for selecting and using a specific MNIST classification model.
     """
 
-    def __init__(self, algorithm="rf"):
+    def __init__(self, algorithm):
         """
         Initializes the classifier based on the selected algorithm.
         :param algorithm: "rf" (Random Forest), "nn" (Feed-Forward NN), "cnn" (Convolutional NN)
         """
         if algorithm == "rf":
             self.model = RandomForestMnistClassifier()
-        # elif algorithm == "nn":
-        #     self.model = FeedForwardNNMnistClassifier()
-        # elif algorithm == "cnn":
-        #     self.model = CNNMnistClassifier()
+        elif algorithm == "nn":
+            self.model = FeedForwardNNClassifier()
+        elif algorithm == "cnn":
+            self.model = CNNClassifier()
         else:
             raise ValueError("❌ Unsupported algorithm. Choose from: 'rf', 'nn', 'cnn'.")
 

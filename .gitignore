@@ -1,6 +1,5 @@
 __pycache__/
 *.log
-*.pkl
 *.h5
 *.ckpt
 *.pt

@@ -28,17 +28,8 @@ def main(algorithm):
     clf = MnistClassifier(algorithm)
     clf.train(X_train, y_train)
 
-    print(f"✅ Model {algorithm} trained successfully!")
-
-    # Define model save path
-    model_path = f"Image_classification/artifacts/models/{algorithm}.pkl"
-
-    if hasattr(clf.model, "save_model"):
-        clf.model.save_model(model_path)
-        print(f"✅ Model {algorithm} saved at {model_path}")
-    else:
-        print(f"❌ Model {algorithm} does not have save_model() method!")
-
+    clf.model.save_model()
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--algorithm", type=str, choices=["rf", "nn", "cnn"], required=True,
