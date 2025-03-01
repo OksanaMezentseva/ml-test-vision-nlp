@@ -14,3 +14,4 @@ __pycache__/
 data/
 venv/
 env/
+models/

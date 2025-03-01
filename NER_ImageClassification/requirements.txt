@@ -12,3 +12,4 @@ torchvision
 pillow
 tqdm
 transformers
+tf-keras

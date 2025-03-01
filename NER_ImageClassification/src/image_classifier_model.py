@@ -9,6 +9,7 @@ import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader, random_split
 from torchvision.datasets import ImageFolder
+from PIL import Image
 
 class ImageClassifier:
 
@@ -16,32 +17,46 @@ class ImageClassifier:
     A deep learning-based image classification model using ResNet18.
     This class handles dataset loading, model training, evaluation, and inference.
     """
-
-    def __init__(self, data_dir, model_save_path, batch_size=32, epochs=10, learning_rate=0.001, predictions_path=None):
+    def __init__(self, data_dir=None, model_save_path="models/classifier_model/classifier_model.pth", 
+             class_map_path=None, batch_size=32, epochs=10, learning_rate=0.001, predictions_path=None):
         
         """
         Initialize the ImageClassifier.
 
         Parameters:
-        - data_dir (str): Path to the dataset directory.
-        - model_save_path (str): Path to save the trained model.
+        - data_dir (str, optional): Path to the dataset directory. If None, the classifier is used only for inference.
+        - model_save_path (str): Path to save/load the trained model.
+        - class_map_path (str, optional): Path to class mapping JSON file.
         - batch_size (int): Number of samples per training batch.
         - epochs (int): Number of training epochs.
         - learning_rate (float): Learning rate for optimization.
         - predictions_path (str, optional): Path to save model predictions.
         """
-        
-        self.data_dir = data_dir
+
+        self.data_dir = data_dir 
         self.model_save_path = model_save_path
-        self.class_map_path = model_save_path.replace(".pth", "_class_map.json")
+        self.class_map_path = class_map_path if class_map_path else model_save_path.replace(".pth", "_class_map.json")
         self.predictions_path = predictions_path if predictions_path else model_save_path.replace(".pth", "_predictions.json")
         self.batch_size = batch_size
         self.epochs = epochs
         self.learning_rate = learning_rate
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        
-        # Load dataset and initialize model
-        self.train_loader, self.val_loader, self.test_loader, self.num_classes, self.class_to_idx, self.class_weights = self.load_data()
+
+        if self.data_dir:
+            self.train_loader, self.val_loader, self.test_loader, self.num_classes, self.class_to_idx, self.class_weights = self.load_data()
+        else:
+            self.train_loader = self.val_loader = self.test_loader = None
+            self.num_classes = None
+            self.class_to_idx = None
+            self.class_weights = None
+
+            if os.path.exists(self.class_map_path):
+                with open(self.class_map_path, "r") as f:
+                    self.class_to_idx = json.load(f)
+                    self.num_classes = len(self.class_to_idx)
+            else:
+                raise ValueError(f"❌ Class mapping file '{self.class_map_path}' not found. Please provide a valid dataset or class mapping file.")
+
         self.model = self.build_model()
         
     def load_data(self):
@@ -103,18 +118,22 @@ class ImageClassifier:
         return train_loader, val_loader, test_loader, len(dataset.classes), class_to_idx, class_weights
     
     def build_model(self):
-
         """
-        Initializes the ResNet18 model with a modified fully connected layer 
-        for classification based on the number of dataset classes.
+        Builds the image classification model.
 
         Returns:
-        - model (torch.nn.Module): The initialized model.
+        - model (torch.nn.Module): The initialized deep learning model.
         """
+        import torchvision.models as models
+        import torch.nn as nn
 
-        model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
+        # Load a pre-trained model
+        model = models.resnet18(pretrained=True)
+        
+        # Replace the last layer to match the number of classes
         num_features = model.fc.in_features
-        model.fc = nn.Linear(num_features, self.num_classes) # Modify output layer to match the number of classes
+        model.fc = nn.Linear(num_features, self.num_classes)
+
         return model.to(self.device)
     
     def train(self):
@@ -193,7 +212,44 @@ class ImageClassifier:
                 json.dump(predictions, f)
             print(f"Predictions saved at {self.predictions_path}")
 
-    
+    def predict_from_image(self, image_path, idx_to_class):
+        """
+        Predicts the class of a single image.
+
+        Parameters:
+        - image_path (str): Path to the image file.
+        - idx_to_class (dict): Mapping of class indices to class names.
+
+        Returns:
+        - str: Predicted class name.
+        """
+        # Define image preprocessing transformations
+        transform = transforms.Compose([
+            transforms.Resize((224, 224)),  # Resize image to match model input size
+            transforms.ToTensor(),  # Convert image to tensor
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize
+        ])
+
+        # Load and preprocess the image
+        image = Image.open(image_path).convert("RGB")  # Ensure it's an RGB image
+        image = transform(image).unsqueeze(0)  # Add batch dimension
+
+        # Move image tensor to device (CPU/GPU)
+        image = image.to(self.device)
+
+        # Set model to evaluation mode
+        self.model.eval()
+
+        with torch.no_grad():
+            # Get model predictions
+            outputs = self.model(image)
+            _, predicted_idx = torch.max(outputs, 1)  # Get index of highest probability
+
+        # Convert index to class name
+        predicted_class = idx_to_class[predicted_idx.item()]
+
+        return predicted_class
+
     def evaluate_model(self):
 
         """ Evaluate model accuracy on the validation set using saved predictions. """
@@ -214,9 +270,3 @@ class ImageClassifier:
 
         accuracy = 100 * correct / total
         print(f"✅ Model Accuracy on Validation Set: {accuracy:.2f}%")
-
-if __name__ == "__main__":
-    classifier = ImageClassifier(
-        data_dir="data/processed-img",
-        model_save_path="models/classifier_model.pth"
-    )

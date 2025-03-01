@@ -1,7 +1,7 @@
-from src.models.random_forest import RandomForestMnistClassifier
-from src.models.feed_forward_nn import FeedForwardNNClassifier
-from src.models.feed_forward_nn import FeedForwardNN
-from src.models.cnn import CNNClassifier
+from src.model_scripts.random_forest import RandomForestMnistClassifier
+from src.model_scripts.feed_forward_nn import FeedForwardNNClassifier
+from src.model_scripts.feed_forward_nn import FeedForwardNN
+from src.model_scripts.cnn import CNNClassifier
 
 class MnistClassifier:
     """

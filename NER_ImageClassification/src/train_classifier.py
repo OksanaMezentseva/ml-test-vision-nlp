@@ -1,5 +1,5 @@
 import argparse
-from src.ImageClassifier import ImageClassifier
+from image_classifier_model import ImageClassifier
 
 def main(args):
     # Initialize classifier with parameters from command line
@@ -10,6 +10,12 @@ def main(args):
         epochs=args.epochs,
         learning_rate=args.learning_rate
     )
+
+    # Load the dataset and splits data into train, valid and test sets
+    classifier.load_data()
+
+    # Initializes the ResNet18 model
+    classifier.build_model()
 
     # Train the model
     classifier.train()
