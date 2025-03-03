@@ -12,23 +12,7 @@ All models follow a unified interface to ensure consistency in training and infe
 
 ## 🛠 Installation
 
-To set up the project locally, follow these steps:
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/OksanaMezentseva/ml-test-vision-nlp.git
-   cd ml-test-vision-nlp/Image_classification
-   ```
-
-2. **Create and activate a virtual environment:**
-
-   ```bash
-   python3 -m venv env
-   source env/bin/activate  # On Windows use: env\Scripts\activate
-   ```
-
-3. **Install dependencies:**
+Install dependencies:
 
    ```bash
    pip install -r requirements.txt
@@ -48,7 +32,6 @@ Image_classification/
 │   ├── mnist_classifier.py       # Model selection class
 │   ├── mnist_classifier_interface.py  # Interface for classifiers
 │── train.py                      # Training script
-│── inference.py                   # Inference script
 │── demo.ipynb                     # Jupyter Notebook demo
 │── requirements.txt                # Project dependencies
 │── README.md                       # Project documentation
@@ -64,16 +47,21 @@ You can explore the project, train models, and run inference using the provided 
 To train a model, run the following command:
 
 ```bash
-python train.py --algorithm <rf|nn|cnn>
+python3 train.py --algorithm <rf|nn|cnn>
 ```
 
 For example, to train a CNN model:
 
 ```bash
-python train.py --algorithm cnn
+python3 train.py --algorithm cnn
 ```
 
 This will save the trained model inside `artifacts/models/`.
+
+### 2. Download Models
+Since the `models/` directories are too large for GitHub, download them from the provided link:
+- **[Download Models](https://drive.google.com/file/d/1qzaWCcprs3PXN53g5AXOUHEuqTYZvh1g/view?usp=sharing)**
+
 
 ## 📌 Key Features
 
@@ -94,7 +82,8 @@ This will save the trained model inside `artifacts/models/`.
 
 ## 📝 Future Improvements
 
-- Implement hyperparameter tuning.
+- Implement hyperparameter tuning to optimize model performance.
+- Use **data augmentation** techniques to improve generalization, especially for misclassified digits.
 
 ## ✨ Contributors
 

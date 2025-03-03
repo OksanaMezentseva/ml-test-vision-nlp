@@ -5,6 +5,8 @@ import joblib
 import os
 import numpy as np
 from src.mnist_classifier_interface import MnistClassifierInterface
+from torchvision import transforms
+from PIL import Image
 
 class FeedForwardNN(nn.Module):
     """

@@ -4,6 +4,8 @@ import torch.optim as optim
 import os
 from src.mnist_classifier_interface import MnistClassifierInterface
 import torch.utils.data as data
+from PIL import Image
+from torchvision import transforms
 
 class CNN(nn.Module):
     """

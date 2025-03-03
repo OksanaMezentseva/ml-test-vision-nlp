@@ -12,7 +12,7 @@ def main(args):
     idx_to_class = {v: k for k, v in class_to_idx.items()}
     
     # Load model
-    classifier = ImageClassifier(data_dir=None, model_save_path=args.model_path, class_map_path = args.class_map_path)
+    classifier = ImageClassifier(data_dir='None', model_save_path=args.model_path, class_map_path = args.class_map_path)
     classifier.load_trained_model()
 
     if args.image_path:

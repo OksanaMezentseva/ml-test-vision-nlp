@@ -90,7 +90,13 @@ class NERModel:
 
         # Load tokenizer and dataset
         self.tokenizer = BertTokenizerFast.from_pretrained("bert-base-cased")
-        self.train_loader, self.val_loader, self.test_loader, self.label_map = self.load_data()
+
+        # Load data only if data_path is provided
+        if self.data_path:
+            self.train_loader, self.val_loader, self.test_loader, self.label_map = self.load_data()
+        else:
+            self.train_loader = self.val_loader = self.test_loader = None
+            self.label_map = {"O": 0, "B-ANIMAL": 1, "I-ANIMAL": 2}
         
         # Load model
         self.model = self.build_model()

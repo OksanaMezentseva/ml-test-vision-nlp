@@ -23,3 +23,13 @@ class MnistClassifierInterface(ABC):
         :return: Predicted labels
         """
         pass
+
+    @abstractmethod
+    def save_model(self, filepath):
+        """Method for saving the model"""
+        pass
+
+    @abstractmethod
+    def load_model(self, filepath):
+        """Method for loading the model"""
+        pass

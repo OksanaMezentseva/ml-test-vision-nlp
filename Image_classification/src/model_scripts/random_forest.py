@@ -3,6 +3,9 @@ from sklearn.ensemble import RandomForestClassifier
 from src.mnist_classifier_interface import MnistClassifierInterface
 import os
 import joblib
+from sklearn.ensemble import RandomForestClassifier
+from torchvision import transforms
+from PIL import Image
 
 class RandomForestMnistClassifier(MnistClassifierInterface):
     """
@@ -38,7 +41,7 @@ class RandomForestMnistClassifier(MnistClassifierInterface):
             raise ValueError("❌ Model is not trained! Call train() before predict().")
         return self.model.predict(X_test)
 
-    def save_model(self, path="Image_classification/artifacts/models/rf.pkl"):
+    def save_model(self, path="artifacts/models/rf.pkl"):
         """
         Save the trained model to a file.
         :param path: Path to save the model

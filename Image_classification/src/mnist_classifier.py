@@ -37,3 +37,9 @@ class MnistClassifier:
         :return: Predicted labels
         """
         return self.model.predict(X_test)
+
+    def save_model(self, filepath):
+        self.model.save_model(filepath)
+    
+    def load_model(self, filepath):
+        self.model.load_model(filepath)
